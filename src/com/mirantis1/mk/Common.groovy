@@ -11,6 +11,10 @@ import groovy.json.JsonSlurperClassic
  *
  */
 
+def test_lib() {
+    return "ahaha"
+}
+
 /**
  * Generate current timestamp
  *
