@@ -1,4 +1,4 @@
-package com.mirantis.mk
+package com.miranti1.mk
 
 import com.cloudbees.groovy.cps.NonCPS
 import java.util.stream.Collectors
