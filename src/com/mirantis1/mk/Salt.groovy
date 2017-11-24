@@ -167,7 +167,7 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
                 checkResult(out, failOnError, output)
                 common.infoMsg("Ping command")
-                out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', batch, null, kwargs, -1, read_timeout)
+                out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
                 checkResult(out, failOnError, output)
 
             }
