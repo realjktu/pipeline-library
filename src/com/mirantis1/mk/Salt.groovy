@@ -163,9 +163,13 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
         if (retries > 0){
             failOnError = true
             retry(retries){
-                 common.infoMsg("Retry command")    
+                common.infoMsg("Retry command")    
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
                 checkResult(out, failOnError, output)
+                common.infoMsg("Ping command")
+                out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', batch, null, kwargs, -1, read_timeout)
+                checkResult(out, failOnError, output)
+
             }
         } else {
              common.infoMsg("One chance execution")
