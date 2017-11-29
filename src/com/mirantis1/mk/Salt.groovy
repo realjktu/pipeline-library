@@ -168,8 +168,9 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
                 checkResult(out, failOnError, output)
                 sleep(5)
                 common.infoMsg("Ping command")
-                pingOut = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
-                checkResult(pingOut, failOnError, output)             
+                cmdRun(saltId, target, 'test.ping', true, null, true)
+                //pingOut = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
+                //checkResult(pingOut, failOnError, output)             
             }
         } else {
              common.infoMsg("One chance execution")
