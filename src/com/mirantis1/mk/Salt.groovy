@@ -575,16 +575,14 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
                                     }
                                 }
                             }
-                            // In case of salt minion changes during the state (for example minion restart) in the previous state need to wait sometime and check that it is up.
+                            // In case of salt minion restart need to wait sometime and check that it is up.
                             // See https://mirantis.jira.com/browse/PROD-16258 for more details
                             if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
-                               if(resource.changes.size() > 0){
-                                    if (resKey.contains("salt_minion_service_restart")){
-                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart and ping it after to check the minion avalibility.")
-                                        sleep(10)
-                                        pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
-                                        checkResult(saltId, pingOut, failOnError, printResults)
-                                    }
+                               if(resource.changes.size() > 0 && resKey.contains("salt_minion_service_restart")){
+                                    common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart and ping it after to check the minion avalibility.")
+                                    sleep(10)
+                                    pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
+                                    checkResult(saltId, pingOut, failOnError, printResults)
                                 }
                             }
                         }
