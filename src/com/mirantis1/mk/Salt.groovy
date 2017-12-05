@@ -165,16 +165,16 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
             retry(retries){
                 common.infoMsg("Retry command")    
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-                checkResult(out, failOnError, output, saltId)
+                checkResult(saltId, out, failOnError, output)
                 common.infoMsg("Ping command")
                 //cmdRun(saltId, target, 'test.ping', true, null, true)
                 pingOut = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
-                checkResult(pingOut, failOnError, output, saltId)             
+                checkResult(saltId, pingOut, failOnError, output)             
             }
         } else {
              common.infoMsg("One chance execution")
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-            checkResult(out, failOnError, output, saltId)
+            checkResult(saltId, out, failOnError, output)
         }
         return out
     } else {
@@ -406,7 +406,7 @@ def enforceHighstate(saltId, target, output = false, failOnError = true, batch =
 
     common.infoMsg("Running state highstate on ${target}")
 
-    checkResult(out, failOnError, output, saltId)
+    checkResult(saltId, out, failOnError, output)
     return out
 }
 
@@ -507,7 +507,7 @@ def runSaltProcessStep(saltId, tgt, fun, arg = [], batch = null, output = false,
  * @param printResults Do you want to print salt results (optional, default true)
  * @param printOnlyChanges If true (default), print only changed resources
  */
-def checkResult(result, failOnError = true, printResults = true, printOnlyChanges = true, saltId = 'pepper') {
+def checkResult(saltId, result, failOnError = true, printResults = true, printOnlyChanges = true) {
     def common = new com.mirantis.mk.Common()
     if(result != null){
         if(result['return']){
@@ -587,7 +587,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                     common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
                                     sleep(10)
                                     pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
-                                    checkResult(pingOut, failOnError, printResults, saltId)
+                                    checkResult(saltId, pingOut, failOnError, printResults)
                                 }
                             }
                         }
