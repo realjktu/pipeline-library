@@ -1,4 +1,4 @@
-package com.miranti1.mk
+package com.mirantis.mk
 
 import com.cloudbees.groovy.cps.NonCPS
 import java.util.stream.Collectors
@@ -163,16 +163,10 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
         if (retries > 0){
             failOnError = true
             retry(retries){
-                common.infoMsg("Retry command")    
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
                 checkResult(saltId, out, failOnError, output)
-                common.infoMsg("Ping command")
-                //cmdRun(saltId, target, 'test.ping', true, null, true)
-                pingOut = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
-                checkResult(saltId, pingOut, failOnError, output)             
             }
         } else {
-             common.infoMsg("One chance execution")
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
             checkResult(saltId, out, failOnError, output)
         }
@@ -502,6 +496,7 @@ def runSaltProcessStep(saltId, tgt, fun, arg = [], batch = null, output = false,
 /**
  * Check result for errors and throw exception if any found
  *
+ * @param saltId Salt Connection object or pepperEnv (the command will be sent using the selected method)
  * @param result    Parsed response of Salt API
  * @param failOnError Do you want to throw exception if salt-call fails (optional, default true)
  * @param printResults Do you want to print salt results (optional, default true)
@@ -562,7 +557,7 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
                                 }else{
                                     outputResources.add(String.format("Resource: %s\n\u001B[36m%s\u001B[0m", resKey, common.prettify(resource)))
                                 }
-                            }                            
+                            }
                             common.debugMsg("checkResult: checking resource: ${resource}")
                             if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "false")){
                                 def prettyResource = common.prettify(resource)
@@ -579,14 +574,13 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
                                         common.errorMsg(errorMsg)
                                     }
                                 }
-                            }                                                   
+                            }
+                            // In case of salt minion changes during the state (for example minion restart) in the previous state need to wait sometime and check that it is up.
+                            // See https://mirantis.jira.com/browse/PROD-16258 for more details
                             if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
                                if(resource.changes.size() > 0){
-                                    common.infoMsg("!!!1111")
-                                    common.infoMsg(resKey)
-                                    common.infoMsg(resource)
                                     if (resKey.contains("salt_minion_service_restart")){
-                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
+                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart and ping it after to check the minion avalibility.")
                                         sleep(10)
                                         pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
                                         checkResult(saltId, pingOut, failOnError, printResults)
@@ -666,7 +660,7 @@ def setSaltOverrides(saltId, salt_overrides, reclass_dir="/srv/salt/reclass") {
          def value = entry[1]
 
          common.debugMsg("Set salt override ${key}=${value}")
-         runSaltProcessStep(saltId, 'I@salt:master', 'reclass.cluster_meta_set', ["${key}", "${value}"], false)
+         runSaltProcessStep(saltId, 'I@salt:master', 'reclass.cluster_meta_set', [key, value], false)
     }
     runSaltProcessStep(saltId, 'I@salt:master', 'cmd.run', ["git -C ${reclass_dir} update-index --skip-worktree classes/cluster/overrides.yml"])
 }
@@ -683,9 +677,25 @@ def runPepperCommand(data, venv)   {
     def python = new com.mirantis.mk.Python()
     def dataStr = new groovy.json.JsonBuilder(data).toString()
 
-    pepperCmdFile = "${venv}/pepper-cmd.json"
-    writeFile file: pepperCmdFile, text: dataStr
-    def pepperCmd = "pepper -c ${venv}/pepperrc --make-token -x ${venv}/.peppercache --json-file ${pepperCmdFile}"
+    def offlineDeployment = env.getEnvironment().containsKey("OFFLINE_DEPLOYMENT") && env["OFFLINE_DEPLOYMENT"].toBoolean()
+    if(!offlineDeployment){
+      try {
+        //TODO: remove wget after global env prop enforcments
+        offlineDeployment = sh(script: "wget -q -T 10 --spider http://google.com", returnStatus: true) != 0
+      } catch(Exception e) {
+        def common = new com.mirantis.mk.Common()
+        common.warningMsg("You might be offline, will use pepper with option --json instead of option --json-file")
+      }
+    }
+    def pepperCmd
+
+    if (!offlineDeployment) {
+        def pepperCmdFile = "${venv}/pepper-cmd.json"
+        writeFile file: pepperCmdFile, text: dataStr
+        pepperCmd = "pepper -c ${venv}/pepperrc --make-token -x ${venv}/.peppercache --json-file ${pepperCmdFile}"
+    } else {
+        pepperCmd = "pepper -c ${venv}/pepperrc --make-token -x ${venv}/.peppercache --json \"" + dataStr.replaceAll('"', '\\\\\\\"') + "\"" // yeah, really 7 backslashes, don't ask why
+    }
 
     if (venv) {
         output = python.runVirtualenvCommand(venv, pepperCmd)
