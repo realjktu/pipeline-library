@@ -579,14 +579,11 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                         common.errorMsg(errorMsg)
                                     }
                                 }
-                            }               
-                            common.infoMsg("!!!")
-                            common.infoMsg(resource.inspect())             
-                            if(resource["result"] instanceof Boolean && resource["result"] == "true"){
-                            //if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
+                            }                                                   
+                            if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
                                 common.infoMsg("!!!1111")
-                                common.infoMsg(resource.inspect())
-                                if (resource.inspect().contains("salt_minion_service_restart")){
+                                common.infoMsg(resKey)
+                                if (resKey.contains("salt_minion_service_restart")){
                                     common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
                                     sleep(10)
                                     pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
