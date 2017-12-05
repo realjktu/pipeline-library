@@ -582,9 +582,9 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                             }               
                             common.infoMsg("!!!")
                             common.infoMsg(resource.inspect())             
-                            if(resource["result"] != null){
+                            if(resource["result"] instanceof String && resource["result"] == "true"){
                             //if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
-                                common.infoMsg("!!!")
+                                common.infoMsg("!!!1111")
                                 common.infoMsg(resource.inspect())
                                 if (resource.inspect().contains("salt_minion_service_restart")){
                                     common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
