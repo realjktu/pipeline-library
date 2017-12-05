@@ -174,7 +174,7 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
         } else {
              common.infoMsg("One chance execution")
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-            checkResult(out, failOnError, output)
+            checkResult(out, failOnError, output, saltId)
         }
         return out
     } else {
@@ -406,7 +406,7 @@ def enforceHighstate(saltId, target, output = false, failOnError = true, batch =
 
     common.infoMsg("Running state highstate on ${target}")
 
-    checkResult(out, failOnError, output)
+    checkResult(out, failOnError, output, saltId)
     return out
 }
 
@@ -587,7 +587,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                     common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
                                     sleep(10)
                                     pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
-                                    checkResult(pingOut, failOnError, printResults)
+                                    checkResult(pingOut, failOnError, printResults, saltId)
                                 }
                             }
                         }
