@@ -582,7 +582,8 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                             }               
                             common.infoMsg("!!!")
                             common.infoMsg(resource.inspect())             
-                            if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
+                            if(resource["result"] != null){
+                            //if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
                                 common.infoMsg("!!!")
                                 common.infoMsg(resource.inspect())
                                 if (resource.inspect().contains("salt_minion_service_restart")){
