@@ -579,7 +579,9 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                         common.errorMsg(errorMsg)
                                     }
                                 }
-                            }                            
+                            }               
+                            common.infoMsg("!!!")
+                            common.infoMsg(resource.inspect())             
                             if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
                                 common.infoMsg("!!!")
                                 common.infoMsg(resource.inspect())
