@@ -166,7 +166,6 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
                 common.infoMsg("Retry command")    
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
                 checkResult(out, failOnError, output)
-                sleep(5)
                 common.infoMsg("Ping command")
                 //cmdRun(saltId, target, 'test.ping', true, null, true)
                 pingOut = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'test.ping', null, null, null, -1, read_timeout)
@@ -563,7 +562,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                 }else{
                                     outputResources.add(String.format("Resource: %s\n\u001B[36m%s\u001B[0m", resKey, common.prettify(resource)))
                                 }
-                            }
+                            }                            
                             common.debugMsg("checkResult: checking resource: ${resource}")
                             if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "false")){
                                 def prettyResource = common.prettify(resource)
@@ -579,6 +578,14 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
                                     } else {
                                         common.errorMsg(errorMsg)
                                     }
+                                }
+                            }                            
+                            if(resource instanceof String || (resource["result"] != null && !resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
+                                if (resource.contains("salt_minion_service_restart")){
+                                    common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
+                                    sleep(10)
+                                    pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
+                                    checkResult(pingOut, failOnError, printResults)
                                 }
                             }
                         }
