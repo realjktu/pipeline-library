@@ -581,13 +581,16 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
                                 }
                             }                                                   
                             if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
-                                common.infoMsg("!!!1111")
-                                common.infoMsg(resKey)
-                                if (resKey.contains("salt_minion_service_restart")){
-                                    common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
-                                    sleep(10)
-                                    pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
-                                    checkResult(saltId, pingOut, failOnError, printResults)
+                               if(resource.changes.size() > 0){
+                                    common.infoMsg("!!!1111")
+                                    common.infoMsg(resKey)
+                                    common.infoMsg(resource)
+                                    if (resKey.contains("salt_minion_service_restart")){
+                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion and ping it after.")
+                                        sleep(10)
+                                        pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
+                                        checkResult(saltId, pingOut, failOnError, printResults)
+                                    }
                                 }
                             }
                         }
