@@ -608,7 +608,7 @@ def waitForMinion(result) {
         common.infoMsg("T1")
         if (matcher.group(1) != null && matcher.group(1).contains("pid")) {
             common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
-            //sleep(10)
+            sleep(time: 10, unit: 'SECONDS')
         }
         common.infoMsg("T2")
     }
