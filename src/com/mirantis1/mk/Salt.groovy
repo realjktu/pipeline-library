@@ -163,14 +163,14 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
         if (retries > 0){
             failOnError = true
             retry(retries){
-                out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-                common.infoMsg(out)
+                out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)                
                 checkResult(out, failOnError, output)
             }
         } else {
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
             checkResult(out, failOnError, output)
         }
+        common.infoMsg(out)
         waitForMinion(out)
         return out
     } else {
@@ -602,7 +602,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 * @param result    Parsed response of Salt API
 */
 def waitForMinion(result) {    
-    def matcher = result =~ /.*salt_minion_service_restart.*?(changes": \{.*?\})/
+    def matcher = result =~ /.*salt_minion_service_restart.*?(changes": \[.*?\])/
     while (matcher.find()) {
         if (matcher.group(1) != null && matcher.group(1).contains("pid")) {
             common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
