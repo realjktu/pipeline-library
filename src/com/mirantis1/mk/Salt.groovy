@@ -604,7 +604,8 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 def waitForMinion(result) {
     def common = new com.mirantis.mk.Common()
     def matcher = result =~ /(?s).*salt_minion_service_restart.*?(changes:\[.*?\])/
-    while (matcher.find()) {
+    common.infoMsg(matcher)
+    while(matcher.find()) {
         if (matcher.group(1) != null && matcher.group(1).contains("pid")) {
             common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
             sleep(10)
