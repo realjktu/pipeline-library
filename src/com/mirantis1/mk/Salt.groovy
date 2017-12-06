@@ -164,11 +164,12 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
             failOnError = true
             retry(retries){
                 out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-                checkResult(saltId, out, failOnError, output)
+                common.infoMsg(out)
+                checkResult(out, failOnError, output)
             }
         } else {
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
-            checkResult(saltId, out, failOnError, output)
+            checkResult(out, failOnError, output)
         }
         return out
     } else {
@@ -400,7 +401,7 @@ def enforceHighstate(saltId, target, output = false, failOnError = true, batch =
 
     common.infoMsg("Running state highstate on ${target}")
 
-    checkResult(saltId, out, failOnError, output)
+    checkResult(out, failOnError, output)
     return out
 }
 
@@ -496,13 +497,12 @@ def runSaltProcessStep(saltId, tgt, fun, arg = [], batch = null, output = false,
 /**
  * Check result for errors and throw exception if any found
  *
- * @param saltId Salt Connection object or pepperEnv (the command will be sent using the selected method)
  * @param result    Parsed response of Salt API
  * @param failOnError Do you want to throw exception if salt-call fails (optional, default true)
  * @param printResults Do you want to print salt results (optional, default true)
  * @param printOnlyChanges If true (default), print only changed resources
  */
-def checkResult(saltId, result, failOnError = true, printResults = true, printOnlyChanges = true) {
+def checkResult(result, failOnError = true, printResults = true, printOnlyChanges = true) {
     def common = new com.mirantis.mk.Common()
     if(result != null){
         if(result['return']){
@@ -575,16 +575,6 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
                                     }
                                 }
                             }
-                            // In case of salt minion restart need to wait sometime and check that it is up.
-                            // See https://mirantis.jira.com/browse/PROD-16258 for more details
-                            if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
-                               if(resource.changes.size() > 0 && resKey.contains("salt_minion_service_restart")){
-                                    common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart and ping it after to check the minion avalibility.")
-                                    sleep(10)
-                                    pingOut = runSaltCommand(saltId, 'local', ['expression': nodeKey, 'type': 'compound'], 'test.ping', null, null, null, -1, 30)
-                                    checkResult(saltId, pingOut, failOnError, printResults)
-                                }
-                            }
                         }
                     }else if(node!=null && node!=""){
                         outputResources.add(String.format("Resource: %s\n\u001B[36m%s\u001B[0m", nodeKey, common.prettify(node)))
@@ -600,6 +590,21 @@ def checkResult(saltId, result, failOnError = true, printResults = true, printOn
     }else{
         common.errorMsg("Cannot check salt result, given result is null")
     }
+}
+
+
+
+def waitForMinion(out) {
+
+    // In case of salt minion restart need to wait sometime and check that it is up.
+    // See https://mirantis.jira.com/browse/PROD-16258 for more details
+    if(resource instanceof String || (resource["result"] != null && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
+        if(resource.changes.size() > 0 && resKey.contains("salt_minion_service_restart")){
+            common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart and ping it after to check the minion avalibility.")
+            sleep(10)
+        }
+    }
+
 }
 
 /**
