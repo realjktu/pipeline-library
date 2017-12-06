@@ -170,7 +170,7 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
             out = runSaltCommand(saltId, 'local', ['expression': target, 'type': 'compound'], 'state.sls', batch, [run_states], kwargs, -1, read_timeout)
             checkResult(out, failOnError, output)
         }
-        common.infoMsg(out)
+        //common.infoMsg(out)
         waitForMinion(out)
         return out
     } else {
