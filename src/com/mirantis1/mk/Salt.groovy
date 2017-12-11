@@ -605,7 +605,9 @@ def waitForMinion(result) {
     common.infoMsg("T1")
     def matcher = (result =~ /(?s).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
     def isMinionRestarted = false
+    println("T123")
     common.infoMsg("T2")
+    println("T2.1")
     while (matcher.find()) {
         common.infoMsg("T3")
         if (matcher.group(1) != null && matcher.group(1).contains("pid")) {
