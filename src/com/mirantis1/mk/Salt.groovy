@@ -599,6 +599,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 *
 * @param result    Parsed response of Salt API
 */
+@NonCPS
 def waitForMinion(result) {
     def common = new com.mirantis.mk.Common()
     common.infoMsg("T1")
