@@ -601,24 +601,25 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 */
 def waitForMinion(result) {
     //println(result)
-    println("T1")
+    def common = new com.mirantis.mk.Common()
+    common.infoMsg("T1")
     def matcher = (result =~ /(?m).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
     def isMinionRestarted = false
-    println("T123")
+    common.infoMsg("T123")
     while (matcher.find()) {
-        println("T3")
+        common.infoMsg("T3")
         if (matcher.group(1) != null && matcher.group(1).contains("pid")) {
             isMinionRestarted = true
         }
     }
-    println("T4")
+    common.infoMsg("T4")
     // There is an exception when use sleep after defined Matcher. Therefore destroy the matcher.
     matcher = null
     if (isMinionRestarted){
         println("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
         sleep(10)
     }
-    println("T5")
+    common.infoMsg("T5")
 }
 
 /**
