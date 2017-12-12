@@ -622,9 +622,10 @@ def waitForMinion(result) {
                             common.infoMsg("Resurce: ${resource}")
                             if(resKey.contains("salt_minion_service_restart") && resource instanceof Map && resource.keySet().contains("result")){                                
                                 if(resource["result"] || (resource["result"] instanceof String && resource["result"] == "true")){
-                                    if(resource.changes.size() > 0)
+                                    if(resource.changes.size() > 0){
                                         common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
                                         sleep(10)
+                                    }
                                 }
 
                             }
