@@ -5,7 +5,7 @@ package com.mirantis.mk
 */
 
 def validateFoundationInfra(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.runSaltProcessStep(master, 'I@salt:master', 'cmd.run', ['salt-key'], null, true)
     salt.runSaltProcessStep(master, 'I@salt:minion', 'test.version', [], null, true)
@@ -15,7 +15,7 @@ def validateFoundationInfra(master) {
 }
 
 def installFoundationInfra(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.enforceState(master, 'I@salt:master', ['salt.master', 'reclass'], true, false, null, false, 120, 2)
 
@@ -34,7 +34,7 @@ def installFoundationInfra(master) {
 }
 
 def installFoundationInfraOnTarget(master, target) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.enforceState(master, 'I@salt:master', ['reclass'], true, false, null, false, 120, 2)
 
@@ -51,7 +51,7 @@ def installFoundationInfraOnTarget(master, target) {
 }
 
 def installInfraKvm(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.runSaltProcessStep(master, 'I@linux:system', 'saltutil.refresh_pillar', [], null, true)
     salt.runSaltProcessStep(master, 'I@linux:system', 'saltutil.sync_all', [], null, true)
@@ -68,7 +68,7 @@ def installInfraKvm(master) {
 }
 
 def installInfra(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Install glusterfs
     if (salt.testTarget(master, 'I@glusterfs:server')) {
@@ -161,7 +161,7 @@ def installOpenstackInfra(master) {
 
 
 def installOpenstackControl(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Install horizon dashboard
     if (salt.testTarget(master, 'I@horizon:server')) {
@@ -301,7 +301,7 @@ def installOpenstackControl(master) {
 
 
 def installIronicConductor(master){
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     if (salt.testTarget(master, 'I@ironic:conductor')) {
         salt.enforceState(master, 'I@ironic:conductor', 'ironic.conductor', true)
@@ -326,7 +326,7 @@ def installIronicConductor(master){
 
 
 def installOpenstackNetwork(master, physical = "false") {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.runSaltProcessStep(master, 'I@neutron:gateway', 'state.apply', [], null, true)
 
@@ -341,7 +341,7 @@ def installOpenstackNetwork(master, physical = "false") {
 
 
 def installOpenstackCompute(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Configure compute nodes
     retry(2) {
@@ -352,7 +352,7 @@ def installOpenstackCompute(master) {
 
 def installContrailNetwork(master) {
     def common = new com.mirantis.mk.Common()
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
 
     // Install opencontrail database services
@@ -382,7 +382,7 @@ def installContrailNetwork(master) {
 
 
 def installContrailCompute(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
     def common = new com.mirantis.mk.Common()
     // Configure compute nodes
     // Provision opencontrail control services
@@ -414,7 +414,7 @@ def installKubernetesInfra(master) {
 
 
 def installKubernetesControl(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Install Kubernetes pool and Calico
     salt.enforceState(master, 'I@kubernetes:master', 'kubernetes.master.kube-addons')
@@ -437,7 +437,7 @@ def installKubernetesControl(master) {
 
 
 def installKubernetesCompute(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Refresh minion's pillar data
     salt.runSaltProcessStep(master, '*', 'saltutil.refresh_pillar', [], null, true)
@@ -465,7 +465,7 @@ def installKubernetesCompute(master) {
 
 
 def installDockerSwarm(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     //Install and Configure Docker
     salt.enforceState(master, 'I@docker:swarm', 'docker.host')
@@ -481,7 +481,7 @@ def installDockerSwarm(master) {
 
 
 def installCicd(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     //Install and Configure Docker
     salt.runSaltProcessStep(master, 'I@jenkins:client or I@gerrit:client', 'saltutil.refresh_pillar', [], null, true)
@@ -503,7 +503,7 @@ def installCicd(master) {
 
 def installStacklight(master) {
     def common = new com.mirantis.mk.Common()
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // Install core services for K8S environments:
     // HAProxy, Nginx and lusterFS clients
@@ -590,7 +590,7 @@ def installStacklight(master) {
 }
 
 def installStacklightv1Control(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // infra install
     // Install the StackLight backends
@@ -631,7 +631,7 @@ def installStacklightv1Control(master) {
 }
 
 def installStacklightv1Client(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
     def common = new com.mirantis.mk.Common()
 
     salt.runSaltProcessStep(master, 'I@elasticsearch:client', 'cmd.run', ['salt-call state.sls elasticsearch.client'], null, true)
@@ -708,7 +708,7 @@ def installStacklightv1Client(master) {
 //
 
 def installCephMon(master, target='I@ceph:mon') {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     salt.enforceState(master, 'I@ceph:common', 'salt.minion.grains', true)
 
@@ -727,7 +727,7 @@ def installCephMon(master, target='I@ceph:mon') {
 }
 
 def installCephOsd(master, target='I@ceph:osd', setup=true) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // install Ceph OSDs
     salt.enforceState(master, target, 'ceph.osd', true)
@@ -744,7 +744,7 @@ def installCephOsd(master, target='I@ceph:osd', setup=true) {
 }
 
 def installCephClient(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // install Ceph Radosgw
     if (salt.testTarget(master, 'I@ceph:radosgw')) {
@@ -756,7 +756,7 @@ def installCephClient(master) {
 }
 
 def connectCeph(master) {
-    def salt = new com.mirantis.mk.Salt()
+    def salt = new com.mirantis1.mk.Salt()
 
     // connect Ceph to the env
     if (salt.testTarget(master, 'I@ceph:common and I@glance:server')) {
