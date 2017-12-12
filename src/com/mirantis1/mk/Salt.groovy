@@ -602,7 +602,7 @@ def waitForMinion(result) {
         if(result['return']){
             for (int i=0;i<result['return'].size();i++) {
                 def entry = result['return'][i]
-                // exit in case of empty response case. 
+                // exit in case of empty response. 
                 if (!entry) {
                     return
                 }
@@ -610,7 +610,6 @@ def waitForMinion(result) {
                 for (int j=0;j<entry.size();j++) {
                     def nodeKey = entry.keySet()[j]
                     def node=entry[nodeKey]
-                    def outputResources = []                    
                     if(node instanceof Map || node instanceof List){
                         // Loop for node resources
                         for (int k=0;k<node.size();k++) {
