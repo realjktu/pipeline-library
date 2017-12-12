@@ -596,6 +596,8 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 
 def waitForMinion(result) {
     def common = new com.mirantis.mk.Common()
+    //In order to prevent multiple sleeps use bool variable to catch restart for any minion.
+    def isMinionRestarted = false
     if(result != null){
         if(result['return']){
             for (int i=0;i<result['return'].size();i++) {
@@ -603,12 +605,13 @@ def waitForMinion(result) {
                 if (!entry) {
                     continue
                 }
+                // Loop for nodes
                 for (int j=0;j<entry.size();j++) {
                     def nodeKey = entry.keySet()[j]
                     def node=entry[nodeKey]
-                    def outputResources = []
-                    common.infoMsg("Node: ${nodeKey}")
+                    def outputResources = []                    
                     if(node instanceof Map || node instanceof List){
+                        // Loop for node resources
                         for (int k=0;k<node.size();k++) {
                             def resource;
                             def resKey;
@@ -617,23 +620,23 @@ def waitForMinion(result) {
                             }else if(node instanceof List){
                                 resKey = k
                             }
-                            common.infoMsg("ResKey: ${resKey}")
                             resource = node[resKey]
-                            common.infoMsg("Resurce: ${resource}")
                             if(resKey.contains("salt_minion_service_restart") && resource instanceof Map && resource.keySet().contains("result")){                                
                                 if(resource["result"] || (resource["result"] instanceof String && resource["result"] == "true")){
                                     if(resource.changes.size() > 0){
-                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
-                                        sleep(10)
+                                        isMinionRestarted=true
                                     }
                                 }
-
                             }
                         }
                     }
                 }
             }
         }
+    }
+    if (isMinionRestarted){
+        println("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
+        sleep(10)
     }
 }
 
