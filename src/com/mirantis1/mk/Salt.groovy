@@ -602,8 +602,9 @@ def waitForMinion(result) {
         if(result['return']){
             for (int i=0;i<result['return'].size();i++) {
                 def entry = result['return'][i]
+                // exit in case of empty response case. 
                 if (!entry) {
-                    continue
+                    return
                 }
                 // Loop for nodes
                 for (int j=0;j<entry.size();j++) {
