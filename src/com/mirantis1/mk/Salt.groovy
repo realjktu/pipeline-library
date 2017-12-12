@@ -603,7 +603,9 @@ def waitForMinion(result) {
     //println(result)
     def common = new com.mirantis.mk.Common()
     common.infoMsg("T1")
-    def matcher = (result =~ /(?m).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
+    Pattern regexRestart = Pattern.compile(".*salt_minion_service_restart.*?(changes:\[.*?\])", Pattern.DOTALL);
+    Matcher matcher = regexRestart.matcher(result);
+    //def matcher = (result =~ /(?m).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
     def isMinionRestarted = false
     common.infoMsg("T123")
     while (matcher.find()) {
