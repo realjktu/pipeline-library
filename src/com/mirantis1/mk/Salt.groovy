@@ -604,7 +604,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 def waitForMinion(result) {
     //println(result)
     def common = new com.mirantis.mk.Common()
-    String resultStr=result.toString()
+    String resultStr=result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()
     common.infoMsg(resultStr)
     common.infoMsg("T1")
     //Pattern regexRestart = Pattern.compile('.*salt_minion_service_restart.*?(changes:\\[.*?\\])', Pattern.DOTALL);
