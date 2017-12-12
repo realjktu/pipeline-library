@@ -621,8 +621,8 @@ def waitForMinion(result) {
                                 resKey = k
                             }
                             resource = node[resKey]
-                            if(resKey.contains("salt_minion_service_restart") && resource instanceof Map && resource.keySet().contains("result")){                                
-                                if(resource["result"] || (resource["result"] instanceof String && resource["result"] == "true")){
+                            if(resKey.contains("salt_minion_service_restart") && resource instanceof Map && resource.keySet().contains("result")){
+                                if((resource["result"] instanceof Boolean && resource["result"]) || (resource["result"] instanceof String && resource["result"] == "true")){
                                     if(resource.changes.size() > 0){
                                         isMinionRestarted=true
                                     }
