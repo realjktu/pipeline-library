@@ -2,6 +2,8 @@ package com.mirantis1.mk
 
 import com.cloudbees.groovy.cps.NonCPS
 import java.util.stream.Collectors
+import java.util.regex.Pattern
+import java.util.regex.Matcher
 /**
  * Salt functions
  *
