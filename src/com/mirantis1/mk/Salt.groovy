@@ -602,7 +602,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 def waitForMinion(result) {
     //println(result)
     println("T1")
-    def matcher = (result =~ /(?s).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
+    def matcher = (result =~ /(?m).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
     def isMinionRestarted = false
     println("T123")
     while (matcher.find()) {
