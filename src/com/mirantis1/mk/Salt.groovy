@@ -594,6 +594,48 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
     }
 }
 
+def waitForMinion(result) {
+    def common = new com.mirantis.mk.Common()
+    if(result != null){
+        if(result['return']){
+            for (int i=0;i<result['return'].size();i++) {
+                def entry = result['return'][i]
+                if (!entry) {
+                    continue
+                }
+                for (int j=0;j<entry.size();j++) {
+                    def nodeKey = entry.keySet()[j]
+                    def node=entry[nodeKey]
+                    def outputResources = []
+                    common.infoMsg("Node: ${nodeKey}")
+                    if(node instanceof Map || node instanceof List){
+                        for (int k=0;k<node.size();k++) {
+                            def resource;
+                            def resKey;
+                            if(node instanceof Map){
+                                resKey = node.keySet()[k]
+                            }else if(node instanceof List){
+                                resKey = k
+                            }
+                            common.infoMsg("ResKey: ${resKey}")
+                            resource = node[resKey]
+                            common.infoMsg("Resurce: ${resource}")
+                            if(resKey.contains("salt_minion_service_restart") && resource instanceof Map && resource.keySet().contains("result")){                                
+                                if(resource["result"] || (resource["result"] instanceof String && resource["result"] = "true")){
+                                    if(resource.changes.size() > 0)
+                                        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
+                                        sleep(10)
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 /**
 * Parse salt API output to check minion restart and wait some time to be sure minion is up.
 * See https://mirantis.jira.com/browse/PROD-16258 for more details
@@ -601,7 +643,7 @@ def checkResult(result, failOnError = true, printResults = true, printOnlyChange
 *
 * @param result    Parsed response of Salt API
 */
-def waitForMinion(result) {
+def waitForMinionOld(result) {
     //println(result)
     def common = new com.mirantis.mk.Common()
     String resultStr=result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()+result.toString()
