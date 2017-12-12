@@ -607,8 +607,8 @@ def waitForMinion(result) {
     String resultStr=result.toString()
     common.infoMsg(resultStr)
     common.infoMsg("T1")
-    //Pattern regexRestart = Pattern.compile('.*salt_minion_service_restart.*?(changes:\\[.*?\\])', Pattern.DOTALL);
     Pattern regexRestart = Pattern.compile('.*salt_minion_service_restart.*?(changes:\\[.*?\\])', Pattern.DOTALL);
+    //Pattern regexRestart = Pattern.compile('.*salt_minion_service_restart.*?(changes:\\[.*?\\])', Pattern.DOTALL);
     common.infoMsg("T1.1")
     Matcher matcher = regexRestart.matcher(resultStr);
     //def matcher = (result =~ /(?m).*salt_minion_service_restart.*?(changes:\[.*?\])/ )
