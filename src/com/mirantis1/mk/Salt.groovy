@@ -635,7 +635,7 @@ def waitForMinion(result) {
         }
     }
     if (isMinionRestarted){
-        println("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
+        common.infoMsg("Salt minion service restart detected. Sleep 10 seconds to wait minion restart")
         sleep(10)
     }
 }
