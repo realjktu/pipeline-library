@@ -163,7 +163,7 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
     if (pillar != null) {
         kwargs["pillar"] = pillar
     }
-
+    common.infoMsg(kwargs)
     if (optional == false || testTarget(saltId, target)){
         if (retries > 0){
             failOnError = true
