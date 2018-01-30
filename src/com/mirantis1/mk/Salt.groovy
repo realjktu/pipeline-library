@@ -161,7 +161,7 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
       kwargs["queue"] = true
     }
     if (pillar != null) {
-        kwargs["pillar"] = pillar
+        kwargs["pillar"] = "'${pillar}'"
     }
     common.infoMsg(kwargs)
     if (optional == false || testTarget(saltId, target)){
