@@ -143,7 +143,7 @@ def getGrain(saltId, target, grain = null) {
  * @param queue salt queue parameter for state.sls calls (optional, default true) - CANNOT BE USED WITH BATCH
  * @return output of salt command
  */
-def enforceState(saltId, target, state, output = true, failOnError = true, batch = null, optional = false, read_timeout=-1, retries=-1, queue=true) {
+def enforceState(saltId, target, state, output = true, failOnError = true, batch = null, optional = false, read_timeout=-1, retries=-1, queue=true, pillar = null) {
     def common = new com.mirantis.mk.Common()
     def run_states
 
@@ -159,6 +159,9 @@ def enforceState(saltId, target, state, output = true, failOnError = true, batch
 
     if (queue && batch == null) {
       kwargs["queue"] = true
+    }
+    if (pillar != null) {
+        kwargs["pillar"] = pillar
     }
 
     if (optional == false || testTarget(saltId, target)){
